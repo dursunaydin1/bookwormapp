@@ -62,6 +62,20 @@ router.get("/", protectRoute, async (req, res) => {
   }
 });
 
+// get recommended books by the logged in user
+router.get("/recommended", protectRoute, async (req, res) => {
+  try {
+    const recommendedBooks = await Book.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .populate("user", "username profileImage");
+
+    res.send(recommendedBooks);
+  } catch (error) {
+    console.log("Error getting recommended books", error);
+    res.status(500).json({ message: "Error getting recommended books" });
+  }
+});
+
 // delete book
 router.delete("/:id", protectRoute, async (req, res) => {
   try {
